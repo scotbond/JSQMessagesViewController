@@ -65,4 +65,10 @@
  */
 @property (strong, nonatomic) UIPanGestureRecognizer *dismissivePanGestureRecognizer;
 
+/**
+ * Keyboard notifications registration
+ */
+- (void)registerForKeyboardNotifications;
+- (void)unregisterFromKeyboardNotifications;
+
 @end

@@ -219,4 +219,11 @@
 			  atScrollPosition:(UITableViewScrollPosition)position
 					  animated:(BOOL)animated;
 
+/**
+ * Keyboard notifications registration
+ */
+- (void)registerForKeyboardNotifications;
+- (void)unregisterFromKeyboardNotifications;
+
+
 @end

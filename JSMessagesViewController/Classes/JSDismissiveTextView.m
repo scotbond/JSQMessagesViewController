@@ -47,28 +47,15 @@
         // ---------------------
         // Can you fix this? Submit a PR! :)
         self.inputAccessoryView = [[UIView alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleKeyboardWillShowHideNotification:)
-                                                     name:UIKeyboardWillShowNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleKeyboardWillShowHideNotification:)
-                                                     name:UIKeyboardDidShowNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleKeyboardWillShowHideNotification:)
-                                                     name:UIKeyboardDidHideNotification
-                                                   object:nil];
+        [self registerForKeyboardNotifications];
+
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self unregisterFromKeyboardNotifications];
     [_dismissivePanGestureRecognizer removeTarget:self action:@selector(handlePanGesture:)];
     _dismissivePanGestureRecognizer = nil;
     _keyboardDelegate = nil;
@@ -84,6 +71,33 @@
 }
 
 #pragma mark - Notifications
+
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleKeyboardWillShowHideNotification:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleKeyboardWillShowHideNotification:)
+                                                 name:UIKeyboardDidShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleKeyboardWillShowHideNotification:)
+                                                 name:UIKeyboardDidHideNotification
+                                               object:nil];
+}
+
+- (void)unregisterFromKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
+    
+    
+}
 
 - (void)handleKeyboardWillShowHideNotification:(NSNotification *)notification
 {

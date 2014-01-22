@@ -20,6 +20,8 @@
 
 @property (assign, nonatomic) CGFloat previousTextViewContentHeight;
 @property (assign, nonatomic) BOOL isUserScrolling;
+@property (assign, nonatomic) BOOL viewIsDisappearing;
+@property (assign, nonatomic) BOOL loadingView;
 
 - (void)setup;
 
@@ -55,6 +57,7 @@
     }
     
 	_isUserScrolling = NO;
+    _loadingView = YES; // will be set to NO upon viewDidAppear
     
     CGSize size = self.view.frame.size;
     
@@ -125,17 +128,28 @@
 {
     [super viewWillAppear:animated];
     
-    [self scrollToBottomAnimated:NO];
+    if (_loadingView)
+        [self scrollToBottomAnimated:NO];
+    [self registerForKeyboardNotifications];
+
+    [_messageInputView.textView registerForKeyboardNotifications];
+
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
     
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(handleWillShowKeyboardNotification:)
-												 name:UIKeyboardWillShowNotification
-                                               object:nil];
+    if (!_loadingView)
+    [_messageInputView.textView addObserver:self
+                                 forKeyPath:@"contentSize"
+                                    options:NSKeyValueObservingOptionNew
+                                    context:nil];
     
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(handleWillHideKeyboardNotification:)
-												 name:UIKeyboardWillHideNotification
-                                               object:nil];
+    _loadingView = NO;
+    _viewIsDisappearing = NO;
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -149,11 +163,17 @@
 {
     [super viewWillDisappear:animated];
     
-    [self.messageInputView resignFirstResponder];
+    _viewIsDisappearing = YES;
+    
     [self setEditing:NO animated:YES];
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [self unregisterFromKeyboardNotifications];
+    
+    [_messageInputView.textView unregisterFromKeyboardNotifications];
+    
+    @try{
+        [_messageInputView.textView removeObserver:self forKeyPath:@"contentSize"];
+    }@catch(id anException){}
 }
 
 - (void)didReceiveMemoryWarning
@@ -356,12 +376,11 @@
 
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
-    [textView becomeFirstResponder];
-	
-    if (!self.previousTextViewContentHeight)
+    if(!self.previousTextViewContentHeight)
 		self.previousTextViewContentHeight = textView.contentSize.height;
     
-    [self scrollToBottomAnimated:YES];
+    if (!_viewIsDisappearing && !_loadingView)
+        [self scrollToBottomAnimated:YES];
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -390,8 +409,10 @@
         changeInHeight = MIN(changeInHeight, maxHeight - self.previousTextViewContentHeight);
     }
     
-    if (changeInHeight != 0.0f) {
-        [UIView animateWithDuration:0.25f
+    CGFloat duration = _loadingView ? 0.0f : 0.25f;
+    
+    if(changeInHeight != 0.0f) {
+        [UIView animateWithDuration:duration
                          animations:^{
                              [self setTableViewInsetsWithBottomValue:self.tableView.contentInset.bottom + changeInHeight];
                              
@@ -467,6 +488,25 @@
 
 #pragma mark - Keyboard notifications
 
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleWillShowKeyboardNotification:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleWillHideKeyboardNotification:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+}
+
+- (void)unregisterFromKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+}
+
 - (void)handleWillShowKeyboardNotification:(NSNotification *)notification
 {
     [self keyboardWillShowHide:notification];
@@ -481,7 +521,7 @@
 {
     CGRect keyboardRect = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
 	UIViewAnimationCurve curve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-	double duration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+	double duration = _loadingView ? 0.0f : [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     
     [UIView animateWithDuration:duration
                           delay:0.0
