@@ -472,7 +472,7 @@
     if ([self respondsToSelector:@selector(topLayoutGuide)]) {
         insets.top = self.topLayoutGuide.length;
     }
-    
+    insets.top = 7.0f;
     insets.bottom = bottom;
     
     return insets;
