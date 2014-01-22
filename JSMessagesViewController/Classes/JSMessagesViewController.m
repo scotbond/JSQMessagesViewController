@@ -184,7 +184,9 @@
 
 - (void)dealloc
 {
-    [_messageInputView.textView removeObserver:self forKeyPath:@"contentSize"];
+    @try{
+        [_messageInputView.textView removeObserver:self forKeyPath:@"contentSize"];
+    }@catch(id anException){}
     _delegate = nil;
     _dataSource = nil;
     _tableView = nil;
