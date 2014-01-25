@@ -14,6 +14,7 @@
 
 #import <UIKit/UIKit.h>
 #import "JSMessageTableView.h"
+#import "JSMessage.h"
 #import "JSMessageData.h"
 #import "JSBubbleMessageCell.h"
 #import "JSMessageInputView.h"
