@@ -376,6 +376,7 @@
     if(!self.previousTextViewContentHeight)
 		self.previousTextViewContentHeight = textView.contentSize.height;
     
+    // only if textViewDidBeginEditing was called upon real user tap on textView
     if (!_viewIsDisappearing && !_loadingView)
         [self scrollToBottomAnimated:YES];
 }
@@ -542,7 +543,12 @@
                          [self setTableViewInsetsWithBottomValue:self.view.frame.size.height
                                                                 - self.messageInputView.frame.origin.y];
                      }
-                     completion:nil];
+                     completion:^(BOOL finished) {
+                         if (_loadingView)
+                             [self scrollToBottomAnimated:NO];
+                         
+                     }];
+    
 }
 
 #pragma mark - Dismissive text view delegate
