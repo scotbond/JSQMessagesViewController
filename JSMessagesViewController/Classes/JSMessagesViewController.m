@@ -22,6 +22,7 @@
 @property (assign, nonatomic) BOOL isUserScrolling;
 @property (assign, nonatomic) BOOL viewIsDisappearing;
 @property (assign, nonatomic) BOOL loadingView;
+@property (strong, nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
 
 - (void)setup;
 
@@ -94,8 +95,8 @@
                                                          panGestureRecognizer:pan];
     
     if (!allowsPan) {
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
-        [_tableView addGestureRecognizer:tap];
+        _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
+        [_tableView addGestureRecognizer:_tapGestureRecognizer];
     }
     
     if ([self.delegate respondsToSelector:@selector(sendButtonForInputView)]) {
@@ -186,7 +187,27 @@
     _dataSource = nil;
     _tableView = nil;
     _messageInputView = nil;
+    _tapGestureRecognizer = nil;
 }
+
+#pragma mark - UIViewController
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    [_tableView setEditing:editing animated:animated];
+    
+    if (editing)
+    {
+        [_tableView removeGestureRecognizer:_tapGestureRecognizer];
+    }
+    else
+    {
+        [_tableView addGestureRecognizer:_tapGestureRecognizer];
+    }
+}
+
+
 
 #pragma mark - View rotation
 
@@ -302,6 +323,19 @@
                                                              displaysAvatar:avatar != nil
                                                           displaysTimestamp:displayTimestamp];
 }
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self.delegate respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)])
+        [self.delegate tableView:tableView didSelectRowAtIndexPath:indexPath];
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self.delegate respondsToSelector:@selector(tableView:didDeselectRowAtIndexPath:)])
+        [self.delegate tableView:tableView didDeselectRowAtIndexPath:indexPath];
+}
+
 
 #pragma mark - Messages view controller
 

@@ -126,6 +126,24 @@
  */
 - (BOOL)allowSendButtonEnabling;
 
+/**
+ *  delegate override for tableView:didSelectRowAtIndexPath:
+ *  This implement it in if you wish to enable edit mode with multiple selection
+ *
+ *  @tableView the table view to be handled
+ *  @indexPath the indexPath for the selected row
+ */
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+
+/**
+ *  delegate override for tableView:didDeselectRowAtIndexPath:
+ *  This implement it in if you wish to enable edit mode with multiple selection
+ *
+ *  @tableView the table view to be handled
+ *  @indexPath the indexPath for the deselected row
+ */
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath;
+
 
 @end
 
