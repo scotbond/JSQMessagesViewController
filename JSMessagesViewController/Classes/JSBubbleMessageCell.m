@@ -238,9 +238,11 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 - (void)setTimestamp:(NSDate *)date
 {
-    self.timestampLabel.text = [NSDateFormatter localizedStringFromDate:date
-                                                              dateStyle:NSDateFormatterMediumStyle
-                                                              timeStyle:NSDateFormatterShortStyle];
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    [dateFormatter setDateFormat:@"MMM d"];
+    
+    self.timestampLabel.text = [dateFormatter stringFromDate:date];
+    
 }
 
 - (void)setSubtitle:(NSString *)subtitle
