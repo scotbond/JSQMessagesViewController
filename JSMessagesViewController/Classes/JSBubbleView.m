@@ -211,7 +211,7 @@
 
 + (CGSize)textSizeForText:(NSString *)txt
 {
-    CGFloat maxWidth = [UIScreen mainScreen].applicationFrame.size.width * 0.70f;
+    CGFloat maxWidth = [UIScreen mainScreen].applicationFrame.size.width * 0.60f;
     CGFloat maxHeight = MAX([JSMessageTextView numberOfLinesForMessage:txt],
                          [txt js_numberOfLines]) * [JSMessageInputView textViewLineHeight];
     maxHeight += kJSAvatarImageSize;
