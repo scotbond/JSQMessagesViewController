@@ -71,7 +71,7 @@
         textView.font = [UIFont systemFontOfSize:16.0f];
         textView.textColor = [UIColor blackColor];
         textView.editable = NO;
-        textView.userInteractionEnabled = YES;
+        textView.userInteractionEnabled = NO;
         textView.showsHorizontalScrollIndicator = NO;
         textView.showsVerticalScrollIndicator = NO;
         textView.scrollEnabled = NO;
