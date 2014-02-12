@@ -359,9 +359,7 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    // TODO: recieve touch only if user tapped on the actual bubble view
-    //CGPoint location = [gestureRecognizer locationInView:[gestureRecognizer view]];
-    
+    // Do not allow long tap on edit mode
     return !self.editing;
 }
 

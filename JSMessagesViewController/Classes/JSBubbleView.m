@@ -70,7 +70,14 @@
         
         JSBubbleTextView *textView = [[JSBubbleTextView alloc] init];
         textView.font = [UIFont systemFontOfSize:16.0f];
-        textView.textColor = [UIColor blackColor];
+        if (bubleType == JSBubbleMessageTypeIncoming)
+            textView.textColor = [UIColor blackColor];
+        else
+            textView.textColor = [UIColor whiteColor];
+        
+        if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_0)
+            textView.tintColor = [UIColor blueColor];
+        
         textView.editable = NO;
         textView.userInteractionEnabled = YES; // Must be on for data recognition to work
         textView.showsHorizontalScrollIndicator = NO;
