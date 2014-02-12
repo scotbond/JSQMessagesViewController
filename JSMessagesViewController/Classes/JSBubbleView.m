@@ -17,6 +17,7 @@
 #import "JSMessageInputView.h"
 #import "JSAvatarImageFactory.h"
 #import "NSString+JSMessagesView.h"
+#import "JSBubbleTextView.h"
 
 #define kMarginTop 8.0f
 #define kMarginBottom 4.0f
@@ -67,11 +68,11 @@
         [self addSubview:bubbleImageView];
         _bubbleImageView = bubbleImageView;
         
-        UITextView *textView = [[UITextView alloc] init];
+        JSBubbleTextView *textView = [[JSBubbleTextView alloc] init];
         textView.font = [UIFont systemFontOfSize:16.0f];
         textView.textColor = [UIColor blackColor];
         textView.editable = NO;
-        textView.userInteractionEnabled = NO;
+        textView.userInteractionEnabled = YES; // Must be on for data recognition to work
         textView.showsHorizontalScrollIndicator = NO;
         textView.showsVerticalScrollIndicator = NO;
         textView.scrollEnabled = NO;
