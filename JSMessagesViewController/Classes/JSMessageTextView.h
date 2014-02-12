@@ -30,6 +30,11 @@
 @property (strong, nonatomic) UIColor *placeHolderTextColor;
 
 /**
+ *  This is the override point for next responder
+ */
+@property (nonatomic, weak) UIResponder *overrideNextResponder;
+
+/**
  *  Returns an unsigned integer describing the number of lines of text contained in the text view.
  *
  *  @return The number of lines of text in the text view.

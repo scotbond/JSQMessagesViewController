@@ -335,7 +335,10 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     if (gestureRecognizer.state != UIGestureRecognizerStateBegan)
         return;
     
-    [self becomeFirstResponder];
+    if ([_inputTextView isFirstResponder])
+        _inputTextView.overrideNextResponder = self;
+    else
+        [self becomeFirstResponder];
     
     UIMenuController *menu = [UIMenuController sharedMenuController];
     CGRect targetRect = [self convertRect:[self.bubbleView bubbleFrame]
@@ -366,6 +369,9 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 - (void)handleMenuWillHideNotification:(NSNotification *)notification
 {
+    
+    _inputTextView.overrideNextResponder = nil;
+    
     self.bubbleView.bubbleImageView.highlighted = NO;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self

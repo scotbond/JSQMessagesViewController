@@ -15,6 +15,7 @@
 #import <UIKit/UIKit.h>
 #import "JSBubbleView.h"
 #import "JSMessageData.h"
+#import "JSMessageTextView.h"
 
 /**
  *  The `JSBubbleMessageCell` class defines the attributes and behavior of the cells that appear in `JSMessagesViewController`. This class includes properties and methods for setting and managing cell content.
@@ -45,6 +46,12 @@
  *  @see JSMessagesViewDataSource.
  */
 @property (weak, nonatomic, readonly) UILabel *subtitleLabel;
+
+/**
+ *  Pointer for JSMessageTextView instance. This is requiered to fix problem with keyboard dismiss when
+ *  UIMenuController is shown
+ */
+@property (weak, nonatomic) JSMessageTextView *inputTextView;
 
 #pragma mark - Initialization
 
