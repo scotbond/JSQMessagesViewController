@@ -197,13 +197,16 @@
     [super setEditing:editing animated:animated];
     [_tableView setEditing:editing animated:animated];
     
-    if (editing)
-    {
-        [_tableView removeGestureRecognizer:_tapGestureRecognizer];
+    BOOL allowsPan = YES;
+    if ([self.delegate respondsToSelector:@selector(allowsPanToDismissKeyboard)]) {
+        allowsPan = [self.delegate allowsPanToDismissKeyboard];
     }
-    else
-    {
-        [_tableView addGestureRecognizer:_tapGestureRecognizer];
+    
+    if (!allowsPan) {
+        if (editing)
+            [_tableView removeGestureRecognizer:_tapGestureRecognizer];
+        else
+            [_tableView addGestureRecognizer:_tapGestureRecognizer];
     }
 }
 
@@ -239,7 +242,8 @@
 
 - (void)handleTapGestureRecognizer:(UITapGestureRecognizer *)tap
 {
-    [self.messageInputView.textView resignFirstResponder];
+    if (!self.tableView.isEditing)
+        [self.messageInputView.textView resignFirstResponder];
 }
 
 #pragma mark - Table view data source
