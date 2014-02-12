@@ -69,6 +69,8 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
     UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self
                                                                                              action:@selector(handleLongPressGesture:)];
     [recognizer setMinimumPressDuration:0.4f];
+    recognizer.delegate = self;
+    [recognizer setCancelsTouchesInView:NO];
     [self addGestureRecognizer:recognizer];
 }
 
@@ -328,10 +330,12 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 #pragma mark - Gestures
 
-- (void)handleLongPressGesture:(UILongPressGestureRecognizer *)longPress
+- (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
 {
-    if (longPress.state != UIGestureRecognizerStateBegan || ![self becomeFirstResponder])
+    if (gestureRecognizer.state != UIGestureRecognizerStateBegan)
         return;
+    
+    [self becomeFirstResponder];
     
     UIMenuController *menu = [UIMenuController sharedMenuController];
     CGRect targetRect = [self convertRect:[self.bubbleView bubbleFrame]
@@ -346,6 +350,16 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
                                                  name:UIMenuControllerWillShowMenuNotification
                                                object:nil];
     [menu setMenuVisible:YES animated:YES];
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    // TODO: recieve touch only if user tapped on the actual bubble view
+    //CGPoint location = [gestureRecognizer locationInView:[gestureRecognizer view]];
+    
+    return !self.editing;
 }
 
 #pragma mark - Notifications

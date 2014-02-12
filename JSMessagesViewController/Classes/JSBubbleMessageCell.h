@@ -19,7 +19,7 @@
 /**
  *  The `JSBubbleMessageCell` class defines the attributes and behavior of the cells that appear in `JSMessagesViewController`. This class includes properties and methods for setting and managing cell content.
  */
-@interface JSBubbleMessageCell : UITableViewCell
+@interface JSBubbleMessageCell : UITableViewCell <UIGestureRecognizerDelegate>
 
 /**
  *  Returns the bubble view used in the cell. JSBubbleMessageCell adds the appropriate bubble view when you create the cell with a given cell type and bubbleImageView. This property is never `nil`. 
