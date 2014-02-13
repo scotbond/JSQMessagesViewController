@@ -56,8 +56,11 @@
         _textView.frame = CGRectMake(6.0f, 3.0f, width, height);
         _textView.backgroundColor = [UIColor whiteColor];
         
-        self.image = [[UIImage imageNamed:@"input-bar-background"] resizableImageWithCapInsets:UIEdgeInsetsMake(19.0f, 3.0f, 19.0f, 3.0f)
-                                                                                  resizingMode:UIImageResizingModeStretch];
+        if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_5_1)
+            self.image = [[UIImage imageNamed:@"input-bar-background"] resizableImageWithCapInsets:UIEdgeInsetsMake(19.0f, 3.0f, 19.0f, 3.0f)
+                                                                                      resizingMode:UIImageResizingModeStretch];
+        else
+            self.image = [[UIImage imageNamed:@"input-bar-background"] resizableImageWithCapInsets:UIEdgeInsetsMake(19.0f, 3.0f, 19.0f, 3.0f)];
         
         UIImageView *inputFieldBack = [[UIImageView alloc] initWithFrame:CGRectMake(_textView.frame.origin.x - 1.0f,
                                                                                     0.0f,
@@ -75,8 +78,11 @@
         _textView.layer.borderWidth = 0.65f;
         _textView.layer.cornerRadius = 6.0f;
         
-        self.image = [[UIImage imageNamed:@"input-bar-flat"] resizableImageWithCapInsets:UIEdgeInsetsMake(2.0f, 0.0f, 0.0f, 0.0f)
-                                                                            resizingMode:UIImageResizingModeStretch];
+        if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_5_1)
+            self.image = [[UIImage imageNamed:@"input-bar-flat"] resizableImageWithCapInsets:UIEdgeInsetsMake(2.0f, 0.0f, 0.0f, 0.0f)
+                                                                                resizingMode:UIImageResizingModeStretch];
+        else
+            self.image = [[UIImage imageNamed:@"input-bar-flat"] resizableImageWithCapInsets:UIEdgeInsetsMake(2.0f, 0.0f, 0.0f, 0.0f)];
     }
 }
 

@@ -25,8 +25,11 @@
 
 - (UIImage *)js_stretchableImageWithCapInsets:(UIEdgeInsets)capInsets
 {
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_5_1)
     return [self resizableImageWithCapInsets:capInsets
                                 resizingMode:UIImageResizingModeStretch];
+    else
+        return [self resizableImageWithCapInsets:capInsets];
 }
 
 - (UIImage *)js_imageAsCircle:(BOOL)clipToCircle
