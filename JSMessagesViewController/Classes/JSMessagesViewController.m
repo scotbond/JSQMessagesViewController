@@ -590,33 +590,50 @@
 	UIViewAnimationCurve curve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
 	double duration = _loadingView ? 0.0f : [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     
-    [UIView animateWithDuration:duration
-                          delay:0.0
-                        options:[self animationOptionsForCurve:curve]
-                     animations:^{
-                         CGFloat keyboardY = [self.view convertRect:keyboardRect fromView:nil].origin.y;
-                         
-                         CGRect inputViewFrame = self.messageInputView.frame;
-                         CGFloat inputViewFrameY = keyboardY - inputViewFrame.size.height;
-                         
-                         // for ipad modal form presentations
-                         CGFloat messageViewFrameBottom = self.view.frame.size.height - inputViewFrame.size.height;
-                         if (inputViewFrameY > messageViewFrameBottom)
-                             inputViewFrameY = messageViewFrameBottom;
-						 
-                         self.messageInputView.frame = CGRectMake(inputViewFrame.origin.x,
-																  inputViewFrameY,
-																  inputViewFrame.size.width,
-																  inputViewFrame.size.height);
-
-                         [self setTableViewInsetsWithBottomValue:self.view.frame.size.height
-                                                                - self.messageInputView.frame.origin.y];
-                     }
-                     completion:^(BOOL finished) {
-                         if (_loadingView)
-                             [self scrollToBottomAnimated:NO];
-                         
-                     }];
+    void (^animation)(void) = ^{
+        CGFloat keyboardY = [self.view convertRect:keyboardRect fromView:nil].origin.y;
+        
+        CGRect inputViewFrame = self.messageInputView.frame;
+        CGFloat inputViewFrameY = keyboardY - inputViewFrame.size.height;
+        
+        // for ipad modal form presentations
+        CGFloat messageViewFrameBottom = self.view.frame.size.height - inputViewFrame.size.height;
+        if (inputViewFrameY > messageViewFrameBottom)
+            inputViewFrameY = messageViewFrameBottom;
+        
+        self.messageInputView.frame = CGRectMake(inputViewFrame.origin.x,
+                                                 inputViewFrameY,
+                                                 inputViewFrame.size.width,
+                                                 inputViewFrame.size.height);
+        
+        [self setTableViewInsetsWithBottomValue:self.view.frame.size.height
+         - self.messageInputView.frame.origin.y];
+    };
+    
+    void (^completion)(BOOL) = ^void(BOOL finished) {
+        if (_loadingView)
+            [self scrollToBottomAnimated:NO];
+    };
+    
+    
+    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+        [UIView animateWithDuration:duration
+                              delay:0.0
+                            options:[self animationOptionsForCurve:curve]
+                         animations:animation
+                         completion:completion];
+    }
+    else if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
+        [UIView animateWithDuration:0.5
+							  delay:0
+			 usingSpringWithDamping:500.0f
+			  initialSpringVelocity:0.0f
+							options:UIViewAnimationOptionCurveLinear
+						 animations:animation
+						 completion:completion];
+    }
+    
+    
     
 }
 
