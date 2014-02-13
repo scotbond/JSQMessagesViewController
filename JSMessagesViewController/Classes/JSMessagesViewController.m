@@ -417,7 +417,33 @@
     
     // only if textViewDidBeginEditing was called upon real user tap on textView
     if (!_viewIsDisappearing && !_loadingView)
-        [self scrollToBottomAnimated:YES];
+    {
+        void (^animation)(void) = ^{
+            // If tableView's visible area (offset) is very close to the end, we
+            // use this animation block. otherwise we use the scrollToBottomAnimated's animation
+            BOOL shouldAnim = YES;
+            if (self.tableView.contentOffset.y >= self.tableView.contentSize.height - 1.2*self.tableView.frame.size.height)
+                shouldAnim = NO;
+            [self scrollToBottomAnimated:shouldAnim];
+        };
+        
+        if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) {
+            [UIView animateWithDuration:0.25
+                                  delay:0.0
+                                options:[self animationOptionsForCurve:UIViewAnimationCurveEaseInOut]
+                             animations:animation
+                             completion:nil];
+        }
+        else if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
+        [UIView animateWithDuration:0.5
+							  delay:0
+			 usingSpringWithDamping:500.0f
+			  initialSpringVelocity:0.0f
+							options:UIViewAnimationOptionCurveLinear
+						 animations:animation
+						 completion:nil];
+        }
+    }
 }
 
 - (void)textViewDidChange:(UITextView *)textView
