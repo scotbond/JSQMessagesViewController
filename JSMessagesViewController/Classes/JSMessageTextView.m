@@ -51,7 +51,6 @@
     self.keyboardAppearance = UIKeyboardAppearanceDefault;
     self.keyboardType = UIKeyboardTypeDefault;
     self.returnKeyType = UIReturnKeyDefault;
-    self.textAlignment = NSTextAlignmentLeft;
 }
 
 - (id)initWithFrame:(CGRect)frame
