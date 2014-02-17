@@ -97,6 +97,7 @@
     if (!allowsPan) {
         _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
         [_tableView addGestureRecognizer:_tapGestureRecognizer];
+        _tapGestureRecognizer.delegate = self;
     }
     
     if ([self.delegate respondsToSelector:@selector(sendButtonForInputView)]) {
@@ -686,6 +687,19 @@
         default:
             return kNilOptions;
     }
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+       shouldReceiveTouch:(UITouch *)touch
+{
+    // Do not respond to tap gesture if user tapped one of the buttons in headerView
+    // This is to fix bug in IOS 5.
+    if ([touch.view isKindOfClass:[UIButton class]]) {
+        return NO;
+    }
+    return YES;
 }
 
 @end
