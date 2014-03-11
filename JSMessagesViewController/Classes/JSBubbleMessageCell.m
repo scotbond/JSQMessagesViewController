@@ -240,11 +240,14 @@ static const CGFloat kJSSubtitleLabelHeight = 15.0f;
 
 - (void)setTimestamp:(NSDate *)date
 {
-    NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    [dateFormatter setDateFormat:@"MMM d"];
-    
+    // declaring static date formatter to prevent init on each cell
+    static NSDateFormatter *dateFormatter = nil;
+    if (!dateFormatter)
+    {
+        dateFormatter = [NSDateFormatter new];
+        [dateFormatter setDateFormat:@"MMM d"];
+    }
     self.timestampLabel.text = [dateFormatter stringFromDate:date];
-    
 }
 
 - (void)setSubtitle:(NSString *)subtitle

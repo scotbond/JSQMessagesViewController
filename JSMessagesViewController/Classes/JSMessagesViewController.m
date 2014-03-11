@@ -274,6 +274,26 @@
     if ([self.delegate respondsToSelector:@selector(shouldDisplayTimestampForRowAtIndexPath:)]) {
         displayTimestamp = [self.delegate shouldDisplayTimestampForRowAtIndexPath:indexPath];
     }
+
+    static NSDataDetector *detector = nil;
+    if (!detector)
+    {
+        NSError *error = NULL;
+        detector = [[NSDataDetector alloc ] initWithTypes:NSTextCheckingTypeLink | NSTextCheckingTypePhoneNumber
+                                                     error:&error ];
+    }
+    
+    NSTextCheckingResult *firstDataType = [detector firstMatchInString:message.text
+                                                               options:0
+                                                                 range:NSMakeRange(0, [message.text length])];
+    NSString *dataTypeIdentifier = @"0";
+    if (firstDataType)
+    {
+        if (firstDataType.resultType == NSTextCheckingTypeLink)
+            dataTypeIdentifier = [(NSURL *)[firstDataType URL] absoluteString];
+        else if (firstDataType.resultType == NSTextCheckingTypePhoneNumber)
+            dataTypeIdentifier = [firstDataType phoneNumber];
+    }
     
     NSString *CellIdentifier = nil;
     if ([self.delegate respondsToSelector:@selector(customCellIdentifierForRowAtIndexPath:)]) {
@@ -281,7 +301,7 @@
     }
 
     if (!CellIdentifier) {
-        CellIdentifier = [NSString stringWithFormat:@"cell_%@", message];
+        CellIdentifier = [NSString stringWithFormat:@"JSMessageCell_%d_%d_%d_%@", (int)type, displayTimestamp, avatar != nil,dataTypeIdentifier];
     }
     
     JSBubbleMessageCell *cell = (JSBubbleMessageCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -303,7 +323,7 @@
 	#if TARGET_IPHONE_SIMULATOR
         cell.bubbleView.textView.dataDetectorTypes = UIDataDetectorTypeNone;
 	#else
-		cell.bubbleView.textView.dataDetectorTypes = UIDataDetectorTypeAll;
+		cell.bubbleView.textView.dataDetectorTypes = UIDataDetectorTypePhoneNumber | UIDataDetectorTypeLink;
 	#endif
 	
     if ([self.delegate respondsToSelector:@selector(configureCell:atIndexPath:)]) {
