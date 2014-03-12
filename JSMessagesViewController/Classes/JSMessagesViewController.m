@@ -162,8 +162,6 @@
     
     _viewIsDisappearing = YES;
     
-    [self setEditing:NO animated:YES];
-    
     [self unregisterFromKeyboardNotifications];
     
     [_messageInputView.textView unregisterFromKeyboardNotifications];
